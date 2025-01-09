@@ -1,0 +1,15 @@
+# Base de données MLflow
+mlruns.db
+
+# Ensemble du répertoire de logs MLflow
+mlruns/
+
+# Caches Python
+__pycache__/
+*.pyc
+
+# Caches Jupyter / checkpoints
+.ipynb_checkpoints/
+
+# Fichiers data CSV
+# data/*.csv
