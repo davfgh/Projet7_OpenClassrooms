@@ -11,7 +11,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest  # Utilisation d'un runner Windows
 
     steps:
     - name: Checkout repository
@@ -19,11 +19,16 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: List all files (Windows-compatible)
-      run: dir /s
+    - name: List all files
+      run: dir /s  # Commande compatible Windows pour lister les fichiers
 
-    - name: Print current working directory (Windows-compatible)
-      run: cd
+    - name: Print current working directory
+      run: cd  # Commande compatible Windows pour afficher le répertoire courant
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.8
 
     - name: Install dependencies
       run: |
