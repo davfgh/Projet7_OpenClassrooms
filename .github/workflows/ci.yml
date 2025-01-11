@@ -16,15 +16,14 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
-
-    - name: List files in repository
-      run: |
-        ls -R
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
       with:
-        python-version: 3.8
+        fetch-depth: 0
+
+    - name: List all files (Windows-compatible)
+      run: dir /s
+
+    - name: Print current working directory (Windows-compatible)
+      run: cd
 
     - name: Install dependencies
       run: |
