@@ -20,10 +20,12 @@ jobs:
         fetch-depth: 0
 
     - name: List all files
-      run: dir /s  # Commande compatible Windows pour lister les fichiers
+      run: |
+        Get-ChildItem -Recurse
 
     - name: Print current working directory
-      run: cd  # Commande compatible Windows pour afficher le répertoire courant
+      run: |
+        cd
 
     - name: Set up Python
       uses: actions/setup-python@v4
