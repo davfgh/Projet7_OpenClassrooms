@@ -11,18 +11,18 @@ on:
 
 jobs:
   test:
-    runs-on: windows-latest  # Environnement Windows pour correspondre à Anaconda
+    runs-on: windows-latest  # Utiliser Windows car votre projet est sous Anaconda Windows
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Print current directory and list files
+    - name: Debug workspace  # Étape de débogage
       run: |
         echo "Current directory:"
         pwd
         echo "Contents:"
-        Get-ChildItem -Recurse
+        dir
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -32,8 +32,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r 3_dossier_code_012025/requirements.txt
+        pip install -r requirements.txt
 
     - name: Run tests
       run: |
-        pytest 3_dossier_code_012025/tests/
+        pytest tests/
