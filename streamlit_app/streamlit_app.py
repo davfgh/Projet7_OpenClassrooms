@@ -201,11 +201,11 @@ try:
     shap_values = explainer(random_client[features_names])
 
     fig, ax = plt.subplots(figsize=(10, 8))
-    shap.waterfall_plot(shap_values[0], max_display=10, show=False)
+    shap.waterfall_plot(shap_values[0], max_display=11, show=False)
     plt.title(f"Impact des principales features sur la prédiction (Client {client_id})")
     st.pyplot(fig)
 
-    st.markdown("🔍 **Figure : SHAP Waterfall Plot des 10 principales features**")
+    st.markdown("🔍 **Figure : SHAP Waterfall Plot des principales features**")
 
 except Exception as e:
     st.error(f"❌ Erreur lors de la génération de la Feature Importance Locale : {e}")
