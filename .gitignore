@@ -24,4 +24,4 @@ data/previous_application.csv
 data/sample_submission.csv
 
 # Dépot Git
-Projet7_OpenClassrooms.git/
+Projet7_OpenClassrooms.git/"mlruns/" 
