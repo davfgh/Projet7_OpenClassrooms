@@ -1,13 +1,15 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import logging
+logging.getLogger('matplotlib').setLevel(logging.WARNING)
 import matplotlib.pyplot as plt
 import requests
 import shap
 import pickle
 import os
 import warnings
-import logging
+
 
 # 🔧 Configuration des logs
 logging.basicConfig(level=logging.DEBUG, format="DEBUG:%(message)s")
@@ -126,6 +128,10 @@ try:
     # 🔗 URL de l'API
     api_url = "http://127.0.0.1:5000/predict"
 
+    # 🚀 Debugging avant l'appel API
+    print(f"🔍 Vérification - Envoi de la requête API avec les données suivantes : {input_data}")
+    print(f"🔍 API URL: {api_url}")
+
     # 🚀 Envoi de la requête à l'API
     response = requests.post(api_url, json=input_data)
 
@@ -157,7 +163,10 @@ try:
         margin_value = st.session_state.margin
         lower_bound = optimal_threshold - margin_value
         upper_bound = optimal_threshold + margin_value
-        probability_class_1 = prediction['probability_class_1']
+        # probability_class_1 = prediction['probability_class_1']
+        probability_class_1 = prediction.get('probability_class_1', None)
+        if probability_class_1 is None:
+            st.error("❌ Erreur : La réponse de l'API ne contient pas la clé 'probability_class_1'. Vérifiez l'API.")
 
         # 📌 **Détermination du verdict final**
         if probability_class_1 < lower_bound:
