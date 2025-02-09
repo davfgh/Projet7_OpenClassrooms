@@ -3,8 +3,8 @@ info:
   title: API de Scoring Client
   description: |
     Cette API permet d'effectuer des prédictions sur la fiabilité d'un client en fonction de ses caractéristiques.
-    Elle utilise un modèle de machine learning sérialisé via pickle et propose un point d'entrée pour soumettre des requêtes et obtenir un score de risque.
-  version: 1.0.0
+    Elle utilise un modèle de machine learning sérialisé via pickle et propose des points d'entrée pour soumettre des requêtes et obtenir des scores de risque et des explications SHAP.
+  version: 1.1.0
 
 servers:
   - url: http://127.0.0.1:5000
@@ -34,6 +34,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/MissingFeatureError"
+        "500":
+          description: Erreur interne du serveur
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerError"
+
+  /shap_values:
+    get:
+      summary: Récupérer les valeurs SHAP pour un client aléatoire
+      description: Retourne les valeurs SHAP calculées pour un échantillon aléatoire du dataset de test.
+      responses:
+        "200":
+          description: Réponse réussie avec les valeurs SHAP
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SHAPResponse"
         "500":
           description: Erreur interne du serveur
           content:
@@ -122,6 +140,28 @@ components:
         upper_bound:
           type: number
           example: 0.150
+
+    SHAPResponse:
+      type: object
+      properties:
+        shap_values:
+          type: array
+          items:
+            type: number
+          example: [-0.05, 0.02, -0.01, 0.08, 0.03, -0.02, 0.07, -0.03, 0.01, -0.06]
+        features_names:
+          type: array
+          items:
+            type: string
+          example: ["AMT_ANNUITY", "AMT_CREDIT", "AMT_GOODS_PRICE", "DAYS_BIRTH", "EXT_SOURCE_1"]
+        sample_values:
+          type: array
+          items:
+            type: number
+          example: [15000, 200000, 180000, -12000, 0.5]
+        base_values:
+          type: number
+          example: 0.6
 
     MissingFeatureError:
       type: object
