@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 import pickle
 import numpy as np
 import os
+import shap
 
 print("🚀 Démarrage du script Flask...")  # Vérifier si Flask démarre bien
 
@@ -90,6 +91,45 @@ def predict():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route('/shap_values', methods=['GET'])
+def get_shap_values():
+    """
+    Endpoint Flask pour récupérer les valeurs SHAP d'un échantillon.
+    Permet d'afficher l'explication SHAP dans la démo Streamlit.
+    """
+    try:
+        # Générer un échantillon aléatoire pour l'explication SHAP
+        num_samples = 1  # Un seul exemple pour éviter une réponse trop lourde
+        sample_data = np.random.randn(num_samples, len(features_names))  # Génération aléatoire (à adapter si dataset disponible)
+
+        # Vérifier si le modèle supporte SHAP
+        if "lightgbm" in str(type(model)).lower():
+            explainer = shap.TreeExplainer(model)
+            shap_values = explainer.shap_values(sample_data)
+            base_values = explainer.expected_value
+        else:
+            explainer = shap.Explainer(model, sample_data)
+            shap_values = explainer(sample_data).values
+            base_values = explainer.expected_value
+
+        # Vérifier si SHAP génère une liste (cas binaire)
+        if isinstance(shap_values, list):
+            shap_values = shap_values[1]  # Sélectionner la classe risquée (1)
+
+        # Construire la réponse JSON
+        response = {
+            "shap_values": shap_values.tolist(),  # Conversion en liste pour JSON
+            "base_values": base_values.tolist() if isinstance(base_values, np.ndarray) else float(base_values),
+            "features_names": features_names,
+            "sample_values": sample_data.tolist(),
+        }
+
+        return jsonify(response), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 if __name__ == "__main__":
     print("🚀 Lancement de l'API Flask...")
