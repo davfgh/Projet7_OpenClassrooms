@@ -115,6 +115,9 @@ components:
         POS_CNT_INSTALMENT_FUTURE:
           type: integer
           example: 2
+        PREV_CNT_PAYMENT:
+          type: number
+          example: 20
 
     PredictionResponse:
       type: object
