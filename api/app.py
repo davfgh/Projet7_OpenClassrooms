@@ -7,10 +7,11 @@ import shap
 print("🚀 Démarrage du script Flask...")  # Vérifier si Flask démarre bien
 
 # 📌 Charger le modèle depuis le fichier pickle
-base_dir = os.path.dirname(os.getcwd())
+# base_dir = os.path.dirname(os.getcwd())
+base_dir = os.getcwd()
 file_path = os.path.join(base_dir, "models", "lgbm_final_model.pkl")
 
-print(f"📂 Chemin du fichier Pickle : {file_path}")  # Vérifier le chemin
+print(f"📂 Chemin du fichier Pickle : {file_path}")
 
 # ✅ Vérifier si le fichier Pickle existe
 if not os.path.exists(file_path):
