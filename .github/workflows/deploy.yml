@@ -41,7 +41,7 @@ jobs:
     - name: Start API for testing
       run: |
         source .venv/bin/activate
-        python api.py &  # Lance l'API en arrière-plan
+        python api./app.py &  # Lance l'API en arrière-plan
         sleep 5  # Donne du temps à l'API pour démarrer
 
     - name: Run unit tests
