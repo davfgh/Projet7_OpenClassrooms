@@ -30,7 +30,7 @@ jobs:
         source .venv/bin/activate
         pip install --upgrade pip
         pip install -r requirements.txt
-        pip install -r <(grep -vE "pywin32|pywinpty" requirements.txt)
+        # pip install -r <(grep -vE "pywin32|pywinpty" requirements.txt)
         pip install gunicorn
 
     # - name: Remove Windows-specific dependencies
