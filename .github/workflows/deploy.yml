@@ -38,6 +38,12 @@ jobs:
     #     sed -i '/^pywin32==/d' requirements.txt
     #     sed -i '/^pywinpty==/d' requirements.txt
 
+    - name: Start API for testing
+      run: |
+        source .venv/bin/activate
+        python api.py &  # Lance l'API en arrière-plan
+        sleep 5  # Donne du temps à l'API pour démarrer
+
     - name: Run unit tests
       run: |
         source .venv/bin/activate
