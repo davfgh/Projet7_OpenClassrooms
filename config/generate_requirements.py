@@ -31,6 +31,12 @@ try:
                 line = re.sub(r"@ file://.*", "", line)
             cleaned_f.write(line)
     print(f"Fichier requirements.txt nettoyé généré à {cleaned_requirements_file}")
+
+    # Ajout manuel de gunicorn pour le déploiement sur Azure
+    with open(cleaned_requirements_file, "a") as cleaned_f:
+        cleaned_f.write("\ngunicorn==21.2.0\n")  # Ajoute Gunicorn pour le serveur
+    print("✅ Gunicorn ajouté au requirements.txt")
+
 except Exception as e:
     print(f"Une erreur inattendue s'est produite lors du nettoyage : {e}")
     exit(1)

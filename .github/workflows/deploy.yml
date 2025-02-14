@@ -30,7 +30,8 @@ jobs:
         source .venv/bin/activate
         pip install --upgrade pip
         pip install -r requirements.txt
-        pip install gunicorn  # Ajout de gunicorn pour exécuter l'API sur Azure
+        pip install -r <(grep -v "pywin32" requirements.txt)
+        pip install gunicorn
 
     - name: Run unit tests
       run: |
