@@ -52,13 +52,13 @@ jobs:
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
-        app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+        app-name: ${{ vars.AZURE_WEBAPP_NAME }}
         package: .
 
     - name: Wait for API to be ready
       run: |
         for i in {1..10}; do
-          if curl -s --head --fail "https://${{ secrets.AZURE_WEBAPP_NAME }}.azurewebsites.net"; then
+          if curl -s --head --fail "https://${{ vars.AZURE_WEBAPP_NAME }}.azurewebsites.net"; then
             echo "API is up!"
             exit 0
           fi
@@ -69,5 +69,5 @@ jobs:
 
     - name: Test deployed API
       run: |
-        curl -X POST "https://${{ secrets.AZURE_WEBAPP_NAME }}.azurewebsites.net/predict" \
+        curl -X POST "https://${{ vars.AZURE_WEBAPP_NAME }}.azurewebsites.net/predict" \
         -H "Content-Type: application/json" -d '{}'
