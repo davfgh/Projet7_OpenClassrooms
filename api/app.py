@@ -3,13 +3,18 @@ import pickle
 import numpy as np
 import os
 import shap
+from pathlib import Path
 
 print("🚀 Démarrage du script Flask...")  # Vérifier si Flask démarre bien
 
 # 📌 Charger le modèle depuis le fichier pickle
-# base_dir = os.path.dirname(os.getcwd())
-base_dir = os.getcwd()
-file_path = os.path.join(base_dir, "models", "lgbm_final_model.pkl")
+# base_dir = os.path.dirname(os.getcwd()) # fonctionne uniquement en local
+# base_dir = os.getcwd() # fonctionne uniquement dans les actions git
+# file_path = os.path.join(base_dir, "models", "lgbm_final_model.pkl") # fonctionne dans un des deux cas
+
+# Tester si cela fonctionne dans les deux cas
+base_dir = Path(__file__).resolve().parent.parent
+file_path = base_dir / "models" / "lgbm_final_model.pkl"
 
 print(f"📂 Chemin du fichier Pickle : {file_path}")
 

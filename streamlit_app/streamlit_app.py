@@ -179,6 +179,14 @@ try:
             verdict = "Zone Grise (Incertitude)"
             verdict_color = "#FFD700"  # Jaune
 
+        # 📌 **Affichage de la probabilité
+        st.markdown(
+            f'<div style="background-color: white; padding: 10px; border-radius: 10px; text-align: center; font-size: 18px; font-weight: bold;">'
+            f'📊 **Probabilité d\'être un client risqué** : {probability_class_1:.2%}'
+            '</div>',
+            unsafe_allow_html=True
+        )
+
         # 📌 **Affichage du Verdict**
         st.markdown(
             f'<div style="background-color: {verdict_color}; padding: 15px; border-radius: 10px;">'
