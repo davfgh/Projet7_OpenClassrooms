@@ -57,8 +57,13 @@ except Exception as e:
 st.header("📌 2. Sélection d'un client")
 
 # 🎲 Bouton pour sélectionner un autre client aléatoire
+# if st.button("🎲 Sélectionner un autre client aléatoire"):
+#     st.session_state.selected_client = None  # Réinitialiser la sélection
+
 if st.button("🎲 Sélectionner un autre client aléatoire"):
     st.session_state.selected_client = None  # Réinitialiser la sélection
+    if "shap_values_data" in st.session_state:
+        del st.session_state.shap_values_data  # Supprimer les valeurs SHAP pour forcer la mise à jour
 
 try:
     # 🔎 Filtrer les clients sans valeurs manquantes
@@ -67,7 +72,9 @@ try:
     if data_clean.empty:
         st.warning("⚠️ Aucun client sans valeurs manquantes trouvé.")
     else:
-        # 🎯 Sélectionner un client aléatoire si aucun n'est déjà sélectionné
+        if "selected_client" not in st.session_state:
+            st.session_state.selected_client = None
+
         if st.session_state.selected_client is None:
             st.session_state.selected_client = data_clean.sample(1, random_state=np.random.randint(1000))
 
@@ -142,7 +149,7 @@ try:
         st.subheader("⚙️ **Réglage du seuil de définition de zone grise (optionnel)**")
 
         st.session_state.margin = st.slider(
-            "Marge de la zone grise (%)", min_value=0.0, max_value=0.10, value=0.00, step=0.01
+            "Marge de la zone grise (%)", min_value=0.0, max_value=0.10, value=0.00, step=0.01, key="zone_grise_slider"
         )
 
         # 📌 **Calcul des seuils dynamiques**
@@ -181,7 +188,8 @@ try:
 
         # 📌 **Affichage de la probabilité
         st.markdown(
-            f'<div style="background-color: white; padding: 10px; border-radius: 10px; text-align: center; font-size: 18px; font-weight: bold;">'
+            f'<div style="background-color: #333333; padding: 10px; border-radius: 10px; '
+            f'text-align: center; font-size: 18px; font-weight: bold; color: white; margin-bottom: 20px;">'
             f'📊 **Probabilité d\'être un client risqué** : {probability_class_1:.2%}'
             '</div>',
             unsafe_allow_html=True
@@ -213,16 +221,51 @@ with st.expander("ℹ️ **Comment lire ce graphique ?**"):
         "- 🟦 **Facteurs réduisant le risque** : Ces features diminuent la probabilité que le client soit risqué."
     )
 
-try:
-    explainer = shap.Explainer(model)
-    shap_values = explainer(random_client[features_names])
+# 📌 Endpoint de l'API pour récupérer les SHAP values
+api_shap_url = "http://127.0.0.1:5000/shap_values"
 
+# 📌 Vérification et récupération des données SHAP avec mise en cache
+if "shap_values_data" not in st.session_state:
+    try:
+        response = requests.get(api_shap_url)
+
+        if response.status_code == 200:
+            st.session_state.shap_values_data = response.json()
+        else:
+            st.error(f"❌ Erreur API SHAP : {response.status_code}, {response.text}")
+    except requests.exceptions.RequestException as e:
+        st.error(f"❌ Erreur de connexion à l'API SHAP : {e}")
+
+# 📌 Utilisation des données SHAP en cache si disponibles
+if "shap_values_data" in st.session_state:
+    shap_data = st.session_state.shap_values_data
+
+    # 🔍 Extraction des données de l'API
+    shap_values = np.array(shap_data["shap_values"]).reshape(1, -1)  # Assurer (1, N)
+    feature_names = shap_data["features_names"]
+    sample_values = np.array(shap_data["sample_values"]).reshape(1, -1)  # Même format (1, N)
+    base_values = shap_data["base_values"]
+
+    # 📌 Vérification des dimensions après correction
+    print(f"📌 SHAP values shape : {shap_values.shape}")
+    print(f"📌 Feature names count : {len(feature_names)}")
+    print(f"📌 Sample values shape : {sample_values.shape}")
+
+    # 📌 Création d'un objet SHAP Explanation pour afficher la figure waterfall
+    explainer = shap.Explanation(
+        values=shap_values[0],  # Prendre la première (et unique) ligne
+        base_values=base_values,
+        data=sample_values[0],  # Correspondance avec les features
+        feature_names=feature_names
+    )
+
+    # 📊 Génération et affichage du Waterfall Plot
     fig, ax = plt.subplots(figsize=(10, 8))
-    shap.waterfall_plot(shap_values[0], max_display=11, show=False)
-    plt.title(f"Impact des principales features sur la prédiction (Client {client_id})")
+    shap.waterfall_plot(explainer, max_display=11, show=False)
+    plt.title(f"Impact des principales features sur la prédiction")
     st.pyplot(fig)
 
     st.markdown("🔍 **Figure : SHAP Waterfall Plot des principales features**")
 
-except Exception as e:
-    st.error(f"❌ Erreur lors de la génération de la Feature Importance Locale : {e}")
+else:
+    st.error("❌ Les données SHAP n'ont pas pu être récupérées.")

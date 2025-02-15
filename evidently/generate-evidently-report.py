@@ -8,7 +8,10 @@ base_dir = "D:/Pro/OpenClassrooms/Projet_7/3_dossier_code_012025"
 features_train_path = os.path.join(base_dir, "features", "app_train_features.csv")
 features_test_path = os.path.join(base_dir, "features", "app_test_features.csv")
 report_dir = os.path.join(base_dir, "evidently", "report")
-report_path = os.path.join(report_dir, "evidently_data_drift_report.html")
+nom = os.getenv("NOM", "Nom")
+prenom = os.getenv("PRENOM", "Prenom")
+filename = f"{nom}_{prenom}_4_Tableau_HTML_data_drift_evidently_012025.html"
+report_path = os.path.join(report_dir, filename)
 
 # 📌 Vérification et création des dossiers si besoin
 os.makedirs(report_dir, exist_ok=True)
@@ -40,7 +43,7 @@ data_drift_report.save_html(report_path)
 print("✅ Rapport Evidently généré avec succès !")
 
 # 📂 Chemin du fichier HTML généré
-html_report_path = os.path.join(base_dir, "evidently", "report", "evidently_data_drift_report.html")
+html_report_path = report_path
 
 # 📝 Lire le contenu du fichier HTML
 with open(html_report_path, "r", encoding="utf-8") as file:
