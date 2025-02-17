@@ -53,9 +53,23 @@ jobs:
         source .venv/bin/activate
         pytest tests/test_api.py
 
+    # - name: Create ZIP Package
+    #   run: |
+    #     zip -r app_package.zip .
+
     - name: Create ZIP Package
       run: |
-        zip -r app_package.zip .
+        zip -r app_package.zip . -x \
+        "*.git*" \
+        "*.venv*" \
+        "*__pycache__*" \
+        "*.ipynb*" \
+        "*.ipynb_checkpoints*" \
+        "*.csv*" \
+        "*.db*" \
+        "*.log*" \
+        "mlruns/*" \
+        "tests/*"
 
     - name: Deploy to Azure Web App
       timeout-minutes: 10
@@ -66,17 +80,34 @@ jobs:
         package: app_package.zip
         # package: .
 
+    - name: Configure Azure Web App startup
+      run: |
+        az webapp config set --name ${{ vars.AZURE_WEBAPP_NAME }} --resource-group ${{ vars.RESOURCE_GROUP }} --startup-file "bash startup.sh"
+
+    # - name: Wait for API to be ready
+    #   run: |
+    #     for i in {1..10}; do
+    #       if curl -s --head --fail "https://${{ vars.AZURE_WEBAPP_NAME }}.azurewebsites.net"; then
+    #         echo "API is up!"
+    #         exit 0
+    #       fi
+    #       echo "Waiting for API..."
+    #       sleep 10
+    #     done
+    #     echo "API did not start in time" && exit 1
+
     - name: Wait for API to be ready
       run: |
-        for i in {1..10}; do
-          if curl -s --head --fail "https://${{ vars.AZURE_WEBAPP_NAME }}.azurewebsites.net"; then
-            echo "API is up!"
-            exit 0
-          fi
-          echo "Waiting for API..."
-          sleep 10
-        done
-        echo "API did not start in time" && exit 1
+        echo "Waiting for API to start..."
+        sleep 20
+        response=$(curl -s -o /dev/null -w "%{http_code}" "https://${{ vars.AZURE_WEBAPP_NAME }}.azurewebsites.net")
+        if [ "$response" -eq 200 ]; then
+          echo "API is up!"
+          exit 0
+        else
+          echo "API did not start properly. Response code: $response"
+          exit 1
+        fi
 
     - name: Test deployed API
       run: |
