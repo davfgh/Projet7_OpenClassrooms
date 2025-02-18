@@ -85,6 +85,11 @@ jobs:
     - name: Set execute permission for startup script  # 📌 Ajout ici
       run: chmod +x api/startup.sh
 
+    - name: Debug Startup File
+      run: |
+        ls -l api/startup.sh
+        cat api/startup.sh
+
     - name: Restart Azure Web App
       run: |
         az webapp restart --name ${{ vars.AZURE_WEBAPP_NAME }} --resource-group ${{ vars.RESOURCE_GROUP }}
