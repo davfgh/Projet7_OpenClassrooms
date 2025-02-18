@@ -69,7 +69,6 @@ jobs:
         "*.log*" \
         "mlruns/*" \
         "tests/*"
-        !startup.sh
 
     - name: Check ZIP size
       run: ls -lh app_package.zip
@@ -79,8 +78,8 @@ jobs:
 
     - name: Debug Startup File
       run: |
-        ls -l api/startup.sh
-        cat api/startup.sh
+        ls -l startup.sh
+        cat startup.sh
 
     - name: Restart Azure Web App
       run: |
