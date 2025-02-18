@@ -34,7 +34,7 @@ jobs:
         source .venv/bin/activate
         pip install --upgrade pip
         pip install -r requirements.txt
-        pip install --force-reinstall numpy gunicorn
+        pip install gunicorn numpy
 
     - name: Start API for testing
       run: |
