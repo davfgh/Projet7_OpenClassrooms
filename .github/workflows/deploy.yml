@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest  # Utilisation d'Ubuntu pour compatibilité avec Azure Actions
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
@@ -37,11 +37,6 @@ jobs:
         # pip install -r <(grep -vE "pywin32|pywinpty" requirements.txt)
         pip install gunicorn
 
-    # - name: Remove Windows-specific dependencies
-    #   run: |
-    #     sed -i '/^pywin32==/d' requirements.txt
-    #     sed -i '/^pywinpty==/d' requirements.txt
-
     - name: Start API for testing
       run: |
         source .venv/bin/activate
@@ -52,10 +47,6 @@ jobs:
       run: |
         source .venv/bin/activate
         pytest tests/test_api.py
-
-    # - name: Create ZIP Package
-    #   run: |
-    #     zip -r app_package.zip .
 
     - name: Test API locally before ZIP
       run: |
@@ -106,18 +97,6 @@ jobs:
     - name: Configure Azure Web App startup
       run: |
         az webapp config set --name ${{ vars.AZURE_WEBAPP_NAME }} --resource-group ${{ vars.RESOURCE_GROUP }} --startup-file "bash startup.sh"
-
-    # - name: Wait for API to be ready
-    #   run: |
-    #     for i in {1..10}; do
-    #       if curl -s --head --fail "https://${{ vars.AZURE_WEBAPP_NAME }}.azurewebsites.net"; then
-    #         echo "API is up!"
-    #         exit 0
-    #       fi
-    #       echo "Waiting for API..."
-    #       sleep 10
-    #     done
-    #     echo "API did not start in time" && exit 1
 
     - name: Wait for API to be ready
       run: |
