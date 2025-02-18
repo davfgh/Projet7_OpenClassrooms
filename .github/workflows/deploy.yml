@@ -34,7 +34,7 @@ jobs:
         source .venv/bin/activate
         pip install --upgrade pip
         pip install -r requirements.txt
-        pip install gunicorn numpy
+        pip install --force-reinstall numpy gunicorn
 
     - name: Start API for testing
       run: |
@@ -100,7 +100,7 @@ jobs:
     - name: Wait for API to be ready
       run: |
         echo "Waiting for API to start..."
-        sleep 20
+        sleep 40
         response=$(curl -s -o /dev/null -w "%{http_code}" "https://${{ vars.AZURE_WEBAPP_NAME }}.azurewebsites.net")
         if [ "$response" -eq 200 ]; then
           echo "API is up!"
