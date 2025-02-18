@@ -34,8 +34,7 @@ jobs:
         source .venv/bin/activate
         pip install --upgrade pip
         pip install -r requirements.txt
-        # pip install -r <(grep -vE "pywin32|pywinpty" requirements.txt)
-        pip install gunicorn
+        pip install gunicorn numpy
 
     - name: Start API for testing
       run: |
@@ -51,7 +50,7 @@ jobs:
     - name: Test API locally before ZIP
       run: |
         source .venv/bin/activate
-        gunicorn -w 2 -k uvicorn.workers.UvicornWorker api.app:app --bind 0.0.0.0:8000 &
+        gunicorn -w 2 api.app:app --bind 0.0.0.0:8000 &
         sleep 5
         curl -I http://127.0.0.1:8000 || (echo "API FAILED TO START LOCALLY"; exit 1)
         pkill gunicorn
