@@ -34,10 +34,29 @@
 # echo "📌 Contenu du dossier API :"
 # ls -la api
 
+
+# cd /home/site/wwwroot
+
+# echo "Activation de l'environnement virtuel déjà inclus..."
+# source .venv/bin/activate
+
+# echo "🚀 Lancement de Gunicorn..."
+# gunicorn -w 2 --chdir api app:app --bind 0.0.0.0:${PORT}
+
+
 cd /home/site/wwwroot
 
-echo "Activation de l'environnement virtuel déjà inclus..."
+# Crée la venv si elle n’existe pas
+if [ ! -d ".venv" ]; then
+    echo "❌ .venv introuvable, création en cours..."
+    python -m venv .venv
+fi
+
+echo "✅ Activation de la venv..."
 source .venv/bin/activate
+
+echo "📌 Installation (requirements-prod.txt)..."
+pip install --no-cache-dir -r requirements-prod.txt
 
 echo "🚀 Lancement de Gunicorn..."
 gunicorn -w 2 --chdir api app:app --bind 0.0.0.0:${PORT}

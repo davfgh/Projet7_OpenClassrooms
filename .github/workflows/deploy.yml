@@ -57,9 +57,9 @@ jobs:
 
     - name: Create ZIP Package
       run: |
-        # Rajouter la ligne suivante pour exclure le .venv du ZIP : "*.venv*" \
-        zip -r app_package.zip . -x \
-        "*.git*" \
+        zip -r app_package.zip . \
+        -x "*.git*" \
+        "*.venv*" \
         "*__pycache__*" \
         "*.ipynb*" \
         "*.ipynb_checkpoints*" \
