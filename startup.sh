@@ -36,7 +36,7 @@
 
 cd /home/site/wwwroot
 
-echo "✅ Activation de l'environnement virtuel déjà inclus..."
+echo "Activation de l'environnement virtuel déjà inclus..."
 source .venv/bin/activate
 
 echo "🚀 Lancement de Gunicorn..."
