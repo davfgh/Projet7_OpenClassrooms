@@ -57,9 +57,9 @@ jobs:
 
     - name: Create ZIP Package
       run: |
+        # Rajouter la ligne suivante pour exclure le .venv du ZIP : "*.venv*" \
         zip -r app_package.zip . -x \
         "*.git*" \
-        # "*.venv*" \
         "*__pycache__*" \
         "*.ipynb*" \
         "*.ipynb_checkpoints*" \
@@ -72,7 +72,7 @@ jobs:
     - name: Check ZIP size
       run: ls -lh app_package.zip
 
-    - name: Set execute permission for startup script  # 📌 Ajout ici
+    - name: Set execute permission for startup script
       run: chmod +x startup.sh
 
     - name: Debug Startup File
