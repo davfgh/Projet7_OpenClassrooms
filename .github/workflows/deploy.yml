@@ -68,9 +68,7 @@ jobs:
         "*.log*" \
         "mlruns/*" \
         "tests/*" \
-        "Farizon_David_2_notebook_modelisation_012025.ipynb" \
-        "api/openapi.yaml" \
-        "api/Farizon_David_5_notebook_test_API_0125.ipynb" \*""
+        "api/openapi.yaml"
 
 
     - name: Check ZIP size
