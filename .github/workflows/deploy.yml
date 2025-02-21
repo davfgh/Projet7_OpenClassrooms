@@ -103,21 +103,23 @@ jobs:
 
     # - name: Wait for API to be ready
     #   run: |
-    #     echo "Waiting for API to start..."
-    #     sleep 40
-    #     response=$(curl -s -o /dev/null -w "%{http_code}" "https://${{ vars.AZURE_WEBAPP_NAME }}.azurewebsites.net")
-    #     if [ "$response" -eq 200 ]; then
-    #       echo "API is up!"
-    #       exit 0
-    #     else
-    #       echo "API did not start properly. Response code: $response"
-    #       exit 1
-    #     fi
+    #     echo "Waiting up to 5 minutes for API to start..."
+    #     for i in {1..30}; do
+    #       response=$(curl -s -o /dev/null -w "%{http_code}" "https://${{ vars.AZURE_WEBAPP_NAME }}.azurewebsites.net")
+    #       if [ "$response" -eq 200 ]; then
+    #         echo "API is up!"
+    #         exit 0
+    #       fi
+    #       echo "API not ready yet (code: $response). Sleeping 10s..."
+    #       sleep 10
+    #     done
+    #     echo "API did not start properly after 5 minutes. Last response code: $response"
+    #     exit 1
 
     - name: Wait for API to be ready
       run: |
-        echo "Waiting up to 5 minutes for API to start..."
-        for i in {1..30}; do
+        echo "Waiting up to 7 minutes for API to start..."
+        for i in {1..42}; do
           response=$(curl -s -o /dev/null -w "%{http_code}" "https://${{ vars.AZURE_WEBAPP_NAME }}.azurewebsites.net")
           if [ "$response" -eq 200 ]; then
             echo "API is up!"
@@ -126,7 +128,7 @@ jobs:
           echo "API not ready yet (code: $response). Sleeping 10s..."
           sleep 10
         done
-        echo "API did not start properly after 5 minutes. Last response code: $response"
+        echo "API did not start properly after 7 minutes. Last response code: $response"
         exit 1
 
     - name: Test deployed API
