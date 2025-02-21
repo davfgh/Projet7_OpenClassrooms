@@ -66,6 +66,8 @@ jobs:
         "*.csv*" \
         "*.db*" \
         "*.log*" \
+        "gunicorn" \
+        "gunicorn.exe" \
         "mlruns/*" \
         "tests/*" \
         "api/openapi.yaml"

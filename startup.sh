@@ -20,5 +20,5 @@ echo "Vérification de l'installation de numpy..."
 pip show numpy
 
 echo "🚀 Lancement de Gunicorn..."
-# gunicorn -w 2 --chdir api app:app --bind 0.0.0.0:${PORT}
-.venv/bin/gunicorn -w 2 --chdir api app:app --bind 0.0.0.0:${PORT}
+gunicorn -w 2 --chdir api app:app --bind 0.0.0.0:${PORT}
+# .venv/bin/gunicorn -w 2 --chdir api app:app --bind 0.0.0.0:${PORT}
