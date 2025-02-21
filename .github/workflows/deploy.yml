@@ -59,7 +59,7 @@ jobs:
       run: |
         zip -r app_package.zip . -x \
         "*.git*" \
-        "*.venv*" \
+        # "*.venv*" \
         "*__pycache__*" \
         "*.ipynb*" \
         "*.ipynb_checkpoints*" \
