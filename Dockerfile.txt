@@ -1,0 +1,24 @@
+# =========================
+# Dockerfile
+# =========================
+
+# 1) Image Python 3.10
+FROM python:3.10-slim-bullseye
+
+# 2) Répertoire
+WORKDIR /app
+
+# 3) Requirements
+COPY requirements-prod.txt ./
+
+# 4) Dépendances
+RUN pip install --no-cache-dir -r requirements-prod.txt
+
+# 5) Copier du code de l'API
+COPY . /app
+
+# 6) Port 8000
+EXPOSE 8000
+
+# 7) Commande de démarrage
+CMD ["gunicorn", "-w", "2", "--chdir", "api", "app:app", "--bind", "0.0.0.0:8000"]
