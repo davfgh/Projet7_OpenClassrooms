@@ -34,7 +34,7 @@ jobs:
 
       - name: Run unit tests
         run: |
-          source .venv/bin/activate
+          source venv/bin/activate
           pytest tests/test_api.py
 
       - name: Zip artifact for deployment
