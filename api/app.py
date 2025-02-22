@@ -48,6 +48,21 @@ print(f"📌 Seuil optimal utilisé pour la classification : {optimal_threshold:
 
 app = Flask(__name__)
 
+@app.route('/')
+def home():
+    """
+    Endpoint racine de l'API.
+    """
+    return (
+        "Bienvenue sur l'API de scoring des clients bancaires ! "
+        "Cette API utilise un modèle de machine learning pour évaluer la probabilité "
+        "de défaut de paiement des clients en fonction de leurs caractéristiques financières. "
+        "Envoyez une requête POST à '/predict' avec les données du client pour obtenir un score de risque.\n\n"
+        "📊 **Explication des résultats avec SHAP** :\n"
+        "L'endpoint GET '/shap_values' permet de récupérer les valeurs SHAP pour un client aléatoire, "
+        "indiquant quelles caractéristiques influencent le plus la prédiction du modèle."
+    )
+
 @app.route('/predict', methods=['POST'])
 def predict():
     """
