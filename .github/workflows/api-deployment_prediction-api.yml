@@ -30,12 +30,21 @@ jobs:
           source venv/bin/activate
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+           pip install --upgrade pip
+           pip install -r requirements.txt
+
+      - name: Start local API
+        run: |
+          source venv/bin/activate
+          gunicorn -w 2 api.app:app --bind 127.0.0.1:8000 &
+          sleep 5
 
       - name: Run unit tests
         run: |
           source venv/bin/activate
           pytest tests/test_api.py
+          pkill gunicorn
 
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
