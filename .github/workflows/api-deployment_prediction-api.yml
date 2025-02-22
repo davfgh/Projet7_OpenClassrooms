@@ -43,6 +43,7 @@ jobs:
       - name: Run unit tests
         run: |
           source venv/bin/activate
+          export API_URL="http://127.0.0.1:8000"
           pytest tests/test_api.py
           pkill gunicorn
 

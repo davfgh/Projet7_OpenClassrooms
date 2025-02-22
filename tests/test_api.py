@@ -1,6 +1,8 @@
 import requests
+import os
 
-API_URL = "http://127.0.0.1:5000"
+# API_URL = "http://127.0.0.1:5000"
+API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
 
 def test_predict_endpoint():
     """ Vérifie que le endpoint /predict fonctionne bien et retourne une réponse correcte. """
