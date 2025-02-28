@@ -57,9 +57,6 @@ except Exception as e:
 st.header("📌 2. Sélection d'un client")
 
 # 🎲 Bouton pour sélectionner un autre client aléatoire
-# if st.button("🎲 Sélectionner un autre client aléatoire"):
-#     st.session_state.selected_client = None  # Réinitialiser la sélection
-
 if st.button("🎲 Sélectionner un autre client aléatoire"):
     st.session_state.selected_client = None  # Réinitialiser la sélection
     if "shap_values_data" in st.session_state:
@@ -132,8 +129,9 @@ try:
     # 📌 Préparation des données pour la prédiction
     input_data = random_client[features_names].to_dict(orient='records')[0]
 
-    # 🔗 URL de l'API
-    api_url = "http://127.0.0.1:5000/predict"
+    # 🔗 URL de l'API (endpoint predict)
+    # api_url = "http://127.0.0.1:5000/predict"
+    api_url= "https://prediction-api.azurewebsites.net/predict"
 
     # 🚀 Debugging avant l'appel API
     print(f"🔍 Vérification - Envoi de la requête API avec les données suivantes : {input_data}")
@@ -222,7 +220,8 @@ with st.expander("ℹ️ **Comment lire ce graphique ?**"):
     )
 
 # 📌 Endpoint de l'API pour récupérer les SHAP values
-api_shap_url = "http://127.0.0.1:5000/shap_values"
+# api_shap_url = "http://127.0.0.1:5000/shap_values"
+api_shap_url = "https://prediction-api.azurewebsites.net/shap_values"
 
 # 📌 Vérification et récupération des données SHAP avec mise en cache
 if "shap_values_data" not in st.session_state:

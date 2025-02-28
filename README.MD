@@ -1,53 +1,93 @@
-Documentation de l'API de Scoring Client
+# Documentation de l'API et de l'Interface Streamlit pour le Scoring Client
 
-1. Introduction
+## 1️. Introduction
 
-Cette API permet d'effectuer des prédictions sur la fiabilité d'un client en fonction de ses caractéristiques. Elle utilise un modèle de machine learning sérialisé via pickle et propose un point d'entrée pour soumettre des requêtes et obtenir un score de risque.
+Cette web application permet d'effectuer des **prédictions sur la fiabilité d'un client** en fonction de ses caractéristiques financières.
 
-2. Architecture
+Elle repose sur **deux composants principaux** :
+- **Une API Flask**, exposant un modèle de machine learning, permettant d'obtenir un score de risque et des valeurs explicatives via SHAP.
+- **Une interface utilisateur Streamlit**, permettant d’explorer les prédictions et d’interagir avec le modèle de manière intuitive.
 
-L'API est développée avec Flask et fonctionne comme suit :
+L'API peut être utilisée **en local** ou **via le déploiement sur le cloud**.
 
-Chargement du modèle stocké dans un fichier pickle.
+---
 
-Vérification des données d'entrée.
+## 2️. **Architecture**
 
-Prédiction du risque client via le modèle.
+### API Flask
+- Chargement du modèle stocké dans un fichier pickle.
+- Vérification des données d'entrée.
+- Prédiction du risque client via le modèle.
+- Retour des résultats sous forme de réponse JSON.
 
-Retour des résultats sous forme de réponse JSON.
+### Interface Streamlit
+- Affichage des **informations client**.
+- Comparaison des caractéristiques avec des moyennes globales.
+- Génération d’une **prédiction et ajustement d’un seuil dynamique**.
+- Visualisation des **valeurs SHAP locales** pour comprendre l'impact des variables sur la décision.
 
-L'API est utilisée à la fois par une application Streamlit et un notebook de test.
+---
 
-3. Installation et Exécution
+## 3️. **Installation et Exécution**
 
-3.1 Prérequis
-
-Avant de démarrer l'API, assurez-vous d'avoir installé les dépendances nécessaires :
-
+### **3.1 Prérequis**
+Avant de démarrer l’API et Streamlit en local, assurez-vous d’avoir installé les dépendances nécessaires :
+```bash
 pip install -r requirements.txt
+```
 
-3.2 Lancement de l'API
+### **3.2 Lancement de l’API en local**
+Si l’API est déjà en cours d’exécution, il faut d’abord la stopper avant de la relancer :
+```bash
+taskkill /F /IM python.exe
+```
 
-L'API se lance via le fichier app.py :
-
+Ensuite, exécutez les commandes suivantes pour démarrer l'API :
+```bash
+cd api
 python app.py
+```
 
-Elle s'exécutera sur http://127.0.0.1:5000/.
+Elle s’exécutera sur `http://127.0.0.1:5000/`.
 
-4. Endpoints
+**Note** : Cette étape n'est pas nécessaire pour la version déployée sur le web.
 
-4.1 Endpoint de prédiction
+### **3.3 Lancement de l'Interface Streamlit en local**
+Après avoir démarré l’API, lancez Streamlit avec la commande suivante :
+```bash
+cd streamlit_app
+streamlit run streamlit_app.py
+```
 
-URL : /predict
+Par défaut, Streamlit sera accessible à l'adresse suivante :
+- **Sur la machine locale** : `http://localhost:8501`
+- **Sur le réseau local (si configuré)** : `http://<IP_LOCAL>:8501`
 
-Méthode : POST
+---
 
-Description : Prend en entrée un dictionnaire JSON contenant les caractéristiques d'un client et retourne la prédiction du modèle.
+## 4️. **Déploiement Automatique sur le Cloud**
+L’API est déployée sur **Azure** et accessible à l'adresse suivante :
+**https://prediction-api.azurewebsites.net**
 
-4.1.1 Exemples de requêtes
+**Déploiement automatique**
+Ce projet utilise le centre de déploiement Azure, assurant un **déploiement continu**.
+Le fichier `.github/workflows/api-deployment_prediction.yml` est issu du déploiement automatique généré par Azure.
+Une étape supplémentaire a été ajoutée dans la section `build` pour exécuter les **tests unitaires** avant le déploiement.
 
-Requête JSON
+**Durée du processus** : Le déploiement peut prendre jusqu'à **30 minutes**.
 
+---
+
+## 5️. **Endpoints de l’API**
+
+### **5.1 Endpoint de prédiction (`/predict`)**
+- **URL en local** : `http://127.0.0.1:5000/predict`
+- **URL après déploiement** : `https://prediction-api.azurewebsites.net/predict`
+- **Méthode** : `POST`
+- **Description** : Prend en entrée un dictionnaire JSON contenant les caractéristiques d'un client et retourne la prédiction du modèle.
+
+#### **Exemple de requête**
+```json
 {
     "AMT_ANNUITY": 15000,
     "AMT_CREDIT": 200000,
@@ -59,17 +99,12 @@ Requête JSON
     "EXT_SOURCE_1": 0.5,
     "EXT_SOURCE_2": 0.7,
     "EXT_SOURCE_3": 0.6,
-    "DEBT_CREDIT_RATIO": 0.3,
-    "ANNUITY_BIRTH_RATIO": 0.02,
-    "ANNUITY_INCOME_PERCENT": 0.1,
-    "CREDIT_GOODS_RATIO": 1.1,
-    "INSTA_AMT_PAYMENT": 10000,
-    "INSTA_NUM_INSTALMENT_VERSION": 3,
-    "POS_CNT_INSTALMENT_FUTURE": 2
+    "DEBT_CREDIT_RATIO": 0.3
 }
+```
 
-Réponse JSON
-
+#### **Exemple de réponse**
+```json
 {
     "prediction": "Classe_0 (fiable)",
     "probability_class_1": 0.120,
@@ -79,71 +114,56 @@ Réponse JSON
     "lower_bound": 0.150,
     "upper_bound": 0.150
 }
+```
 
-5. Gestion des erreurs
+### **5.2 Endpoint des valeurs SHAP (`/shap_values`)**
+- **URL en local** : `http://127.0.0.1:5000/shap_values`
+- **URL après déploiement** : `https://prediction-api.azurewebsites.net/shap_values`
+- **Méthode** : `GET`
+- **Description** : Retourne les valeurs SHAP pour expliquer la décision du modèle sur un client donné.
 
-L'API intègre plusieurs mécanismes de gestion des erreurs pour assurer une réponse claire en cas de problème.
+#### **Exemple de réponse**
+```json
+{
+    "shap_values": [-0.05, 0.02, -0.01, 0.08],
+    "features_names": ["AMT_ANNUITY", "AMT_CREDIT", "AMT_GOODS_PRICE", "DAYS_BIRTH"],
+    "sample_values": [15000, 200000, 180000, -12000],
+    "base_values": 0.6
+}
+```
 
-5.1 Erreurs liées au chargement du modèle
+---
 
-Erreur
+## 6️. **Fichier OpenAPI pour tests sur Postman**
+Le fichier `openapi.yml` situé dans le dossier `api/` permet de tester facilement les endpoints via **Postman** ou **Swagger UI**.
 
-Message renvoyé
+---
 
-Modèle introuvable
+## 7️. **Tests de l'API**
+Les **tests unitaires** sont exécutés automatiquement lors du **déploiement sur Azure**.
+Ils permettent de s'assurer que les endpoints `/predict` et `/shap_values` fonctionnent correctement.
 
-{ "error": "Le fichier Pickle 'lgbm_final_model.pkl' est introuvable." }
+Pour tester l'API à la fois en local et après déploiement, vous pouvez utiliser le notebook :
+📂 `api/Farizon_David_5_notebook_test_API_0125.ipynb`
 
-Modèle mal formaté
+---
 
-{ "error": "Le fichier Pickle ne contient pas les bonnes clés ('model', 'features')." }
+## 8️. **Structure des fichiers**
+```bash
+📂 projet-scoring-client
+│── 📂 api
+│   │── app.py                # Script principal de l'API Flask
+│   │── Farizon_David_5_notebook_test_API_0125.ipynb  # Notebook pour tester l'API
+│   │── openapi.yml            # Spécification OpenAPI pour Postman
+│── 📂 models
+│   │── lgbm_final_model.pkl  # Modèle ML
+│── 📂 features
+│   │── app_test_features.csv # Données de test
+│── 📂 streamlit
+│   │── streamlit_app.py      # Interface utilisateur
+│── requirements.txt          # Dépendances
+│── README.md                 # Documentation
+│── .github/workflows/api-deployment_prediction.yml  # CI/CD
+```
 
-Erreur lors du chargement
-
-{ "error": "Erreur lors du chargement du modèle : <détails de l'erreur>" }
-
-5.2 Erreurs liées aux données d'entrée
-
-Erreur
-
-Message renvoyé
-
-Features manquantes
-
-{ "error": "Features manquantes : ['nom_feature_manquante']" }
-
-Format incorrect
-
-{ "error": "Erreur lors du traitement des données : <détails de l'erreur>" }
-
-5.3 Erreurs générales
-
-Erreur
-
-Message renvoyé
-
-Erreur interne
-
-{ "error": "<détails de l'erreur>" }
-
-API inaccessible
-
-L'API ne répond pas et retourne un code HTTP 500 ou 503.
-
-6. Structure des fichiers
-
-L'API est organisée comme suit :
-
-api/
-│── app.py                 # Script principal de l'API Flask
-│── test_api.ipynb         # Notebook de test de l'API
-models/
-│── lgbm_final_model.pkl   # Modèle de machine learning sérialisé
-
-7. Tests
-
-7.1 Test via le Notebook
-
-Le fichier test_api.ipynb permet de tester l'API localement. Il génère des données aléatoires respectant le format requis, effectue une requête à l'API et affiche les résultats.
-
-Fin de la documentation.
+**Bonne utilisation de l’API et de l’interface Streamlit !**
