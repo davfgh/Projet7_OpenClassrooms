@@ -63,7 +63,7 @@ mlflow ui --backend-store-uri mlruns/
 Puis, ouvrez le navigateur à l'adresse :
 **http://127.0.0.1:5000**
 
-### 🔹 **Rapport Evidently sur le Data Drift**
+### **Rapport Evidently sur le Data Drift**
 Un rapport Evidently est généré pour analyser le **data drift**, disponible à l'emplacement suivant :
 `evidently/report/`
 `Farizon_David_4_Tableau_HTML_data_drift_evidently_012025.html`

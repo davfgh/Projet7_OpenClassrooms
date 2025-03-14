@@ -60,7 +60,7 @@ st.header("📌 2. Sélection d'un client")
 if st.button("🎲 Sélectionner un autre client aléatoire"):
     st.session_state.selected_client = None  # Réinitialiser la sélection
     if "shap_values_data" in st.session_state:
-        del st.session_state.shap_values_data  # Supprimer les valeurs SHAP pour forcer la mise à jour
+        del st.session_state.shap_values_data  # Suppression des valeurs SHAP pour forcer la mise à jour
 
 try:
     # 🔎 Filtrer les clients sans valeurs manquantes
@@ -87,7 +87,7 @@ try:
         mean_std = data_clean[features_names].agg(["mean", "std"])
 
         # Remplissage du DataFrame
-        rows_list = []  # Stocker les lignes avant de créer le DataFrame
+        rows_list = []  # Stockage des lignes
 
         for feature in features_names:
             val_client = random_client[feature].values[0]
@@ -100,7 +100,7 @@ try:
             else:
                 statut = "🟥 Hors de l'intervalle"
 
-            # Ajouter une ligne sous forme de dictionnaire
+            # Ligne sous forme de dictionnaire
             rows_list.append({
                 "Feature": feature,
                 "Valeur Client": val_client,
@@ -113,7 +113,6 @@ try:
         comparison_df = pd.DataFrame(rows_list)
 
         # Affichage
-        # st.dataframe(comparison_df, use_container_width=True)
         st.dataframe(
             comparison_df.style.format({"Valeur Client": "{:.3f}", "Moyenne": "{:.3f}", "Écart-Type": "{:.3f}"}),
             use_container_width=True
@@ -168,12 +167,11 @@ try:
         margin_value = st.session_state.margin
         lower_bound = optimal_threshold - margin_value
         upper_bound = optimal_threshold + margin_value
-        # probability_class_1 = prediction['probability_class_1']
         probability_class_1 = prediction.get('probability_class_1', None)
         if probability_class_1 is None:
             st.error("❌ Erreur : La réponse de l'API ne contient pas la clé 'probability_class_1'. Vérifiez l'API.")
 
-        # 📌 **Détermination du verdict final**
+        # 📌 **Verdict final**
         if probability_class_1 < lower_bound:
             verdict = "Classe_0 (Fiable)"
             verdict_color = "lightgreen"
@@ -252,7 +250,7 @@ if "shap_values_data" in st.session_state:
 
     # 📌 Création d'un objet SHAP Explanation pour afficher la figure waterfall
     explainer = shap.Explanation(
-        values=shap_values[0],  # Prendre la première (et unique) ligne
+        values=shap_values[0],
         base_values=base_values,
         data=sample_values[0],  # Correspondance avec les features
         feature_names=feature_names
